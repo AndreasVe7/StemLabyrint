@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+
+.container {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 60%, #18181c 0%, #050509 90%, #000 100%);
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: url('/stone_wall_lanterns.jpeg') center center / cover no-repeat;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.mist {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 40vh;
+  pointer-events: none;
+  z-index: 2;
+}
+.mistLayer {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 40vh;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.18) 0%, rgba(180,210,255,0.10) 60%, transparent 100%);
+  filter: blur(18px);
+  opacity: 0.7;
+  animation: mistDrift1 38s linear infinite alternate;
+}
+.mistLayer2 {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 32vh;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 30% 90%, rgba(200,220,255,0.13) 0%, transparent 80%);
+  filter: blur(24px);
+  opacity: 0.5;
+  animation: mistDrift2 54s linear infinite alternate;
+}
+.mistLayer3 {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 28vh;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 70% 100%, rgba(255,255,255,0.10) 0%, transparent 80%);
+  filter: blur(32px);
+  opacity: 0.4;
+  animation: mistDrift3 70s linear infinite alternate;
+}
+@keyframes mistDrift1 {
+  0% { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(60px) translateY(-10px); }
+}
+@keyframes mistDrift2 {
+  0% { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(-80px) translateY(-18px); }
+}
+@keyframes mistDrift3 {
+  0% { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(40px) translateY(-24px); }
+}
+
+.firefly {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffbe7 70%, #ffe066 100%, transparent 100%);
+  box-shadow: 0 0 32px 12px #ffe066, 0 0 64px 24px #fffbe7;
+  opacity: 0.95;
+  z-index: 3;
+  pointer-events: auto;
+  animation-name: fireflyFloat, fireflyFlicker;
+  animation-timing-function: ease-in-out, linear;
+  animation-iteration-count: infinite, infinite;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.firefly:hover {
+  transform: scale(1.7);
+  box-shadow: 0 0 48px 24px #ffe066, 0 0 96px 48px #fffbe7;
+  opacity: 1;
+  z-index: 6;
+}
+@keyframes fireflyFloat {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-24px) scale(1.12); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes fireflyFlicker {
+  0%, 100% { opacity: 0.95; }
+  10% { opacity: 0.8; }
+  20% { opacity: 1; }
+  30% { opacity: 0.7; }
+  40% { opacity: 1; }
+  50% { opacity: 0.9; }
+  60% { opacity: 1; }
+  70% { opacity: 0.8; }
+  80% { opacity: 1; }
+  90% { opacity: 0.9; }
+}
+
+.title {
+  font-family: 'UnifrakturCook', cursive, serif;
+  font-size: 4.5rem;
+  color: #f0f4ff;
+  margin-bottom: 0.5em;
+  z-index: 5;
+  text-shadow: 0 6px 48px #000, 0 2px 0 #000;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-family: 'UnifrakturCook', cursive, serif;
+  font-size: 2.2rem;
+  color: #f6f6fa;
+  margin-bottom: 2em;
+  z-index: 5;
+  max-width: 90vw;
+  text-align: center;
+  text-shadow: 0 2px 12px #000;
+  font-weight: 700;
+}
+
+.startButton {
+  font-size: 2.2rem;
+  padding: 0;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle at 60% 40%, #e0e6ff 0%, #6a7cff 60%, #23243a 100%);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 40px 16px #6a7cff, 0 0 80px 32px #23243a;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  z-index: 4;
+  outline: none;
+  animation: orbPulse 2.5s infinite alternate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'UnifrakturCook', cursive, serif;
+  letter-spacing: 0.04em;
+  font-weight: bold;
+  text-shadow: 0 2px 8px #23243a, 0 1px 0 #000;
+}
+@keyframes orbPulse {
+  0% { box-shadow: 0 0 40px 16px #6a7cff, 0 0 80px 32px #23243a; }
+  100% { box-shadow: 0 0 64px 32px #e0e6ff, 0 0 120px 48px #23243a; }
+}
+.startButton:active, .startButton:focus {
+  transform: scale(0.97);
+  box-shadow: 0 0 24px 8px #6a7cff, 0 0 32px 12px #23243a;
+} 
