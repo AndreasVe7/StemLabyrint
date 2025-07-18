@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from '../HomeScreen.module.css';
 import Fireflies from '../Fireflies';
 
@@ -56,31 +56,36 @@ const MINI_GAME_POINTS = [
 
 export default function MazeTestPage() {
   const canvasRef = useRef(null);
+  // Find the center-most corridor cell for orb start
+  const { x: centerX, y: centerY } = findCenterCorridorCell(MAZE);
+  // Orb position in grid
+  const [orbPos, setOrbPos] = useState({ x: centerX, y: centerY });
+  // Orb position in pixels for animation
+  const [orbPixel, setOrbPixel] = useState({ x: 0, y: 0 });
+  // Store maze offsets for pixel calculation
+  const mazeOffsets = useRef({ offsetX: 0, offsetY: 0 });
 
-  useEffect(() => {
+  // Draw maze (static, only once)
+  function drawMazeStatic() {
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
     const mazeRows = MAZE.length;
     const mazeCols = MAZE[0].length;
     const mazeWidth = mazeCols * TILE_SIZE;
     const mazeHeight = mazeRows * TILE_SIZE;
-
-    // Center the maze
     const offsetX = (canvas.width - mazeWidth) / 2;
     const offsetY = (canvas.height - mazeHeight) / 2;
-
+    mazeOffsets.current = { offsetX, offsetY };
     // Draw maze background
     ctx.fillStyle = MAZE_BG;
     ctx.fillRect(offsetX, offsetY, mazeWidth, mazeHeight);
-
     // Draw vertical walls
     for (let x = 0; x <= mazeCols; x++) {
       for (let y = 0; y < mazeRows; y++) {
         if (x === 0 || x === mazeCols || MAZE[y][x - 1] === 1 || (x < mazeCols && MAZE[y][x] === 1)) {
-          // Wall body
           ctx.fillStyle = WALL_COLOR;
           ctx.fillRect(
             offsetX + x * TILE_SIZE - WALL_THICKNESS / 2,
@@ -88,7 +93,6 @@ export default function MazeTestPage() {
             WALL_THICKNESS,
             TILE_SIZE
           );
-          // Shadow
           ctx.fillStyle = WALL_SHADOW;
           ctx.fillRect(
             offsetX + x * TILE_SIZE + WALL_THICKNESS / 2 - 2,
@@ -103,7 +107,6 @@ export default function MazeTestPage() {
     for (let y = 0; y <= mazeRows; y++) {
       for (let x = 0; x < mazeCols; x++) {
         if (y === 0 || y === mazeRows || MAZE[y - 1]?.[x] === 1 || (y < mazeRows && MAZE[y][x] === 1)) {
-          // Wall body
           ctx.fillStyle = WALL_COLOR;
           ctx.fillRect(
             offsetX + x * TILE_SIZE,
@@ -111,7 +114,6 @@ export default function MazeTestPage() {
             TILE_SIZE,
             WALL_THICKNESS
           );
-          // Shadow
           ctx.fillStyle = WALL_SHADOW;
           ctx.fillRect(
             offsetX + x * TILE_SIZE,
@@ -122,27 +124,6 @@ export default function MazeTestPage() {
         }
       }
     }
-
-    // Find the center-most corridor cell
-    const { x: orbCellX, y: orbCellY } = findCenterCorridorCell(MAZE);
-    // Draw glowing blue orb in the center corridor cell
-    const orbRadius = TILE_SIZE * 0.35;
-    const orbX = offsetX + (orbCellX + 0.5) * TILE_SIZE;
-    const orbY = offsetY + (orbCellY + 0.5) * TILE_SIZE;
-    const gradient = ctx.createRadialGradient(orbX, orbY, orbRadius * 0.3, orbX, orbY, orbRadius);
-    gradient.addColorStop(0, '#aef6ff');
-    gradient.addColorStop(0.5, '#3ecfff');
-    gradient.addColorStop(1, 'rgba(30,80,255,0.08)');
-    ctx.save();
-    ctx.globalAlpha = 0.95;
-    ctx.beginPath();
-    ctx.arc(orbX, orbY, orbRadius, 0, 2 * Math.PI);
-    ctx.fillStyle = gradient;
-    ctx.shadowColor = '#3ecfff';
-    ctx.shadowBlur = 32;
-    ctx.fill();
-    ctx.restore();
-
     // Draw mini-game points
     MINI_GAME_POINTS.forEach(({ x, y }) => {
       const mgX = offsetX + (x + 0.5) * TILE_SIZE;
@@ -162,7 +143,109 @@ export default function MazeTestPage() {
       ctx.fill();
       ctx.restore();
     });
+  }
+
+  // Draw orb only (clear orb area, then draw orb)
+  function drawOrbAtPixel(x, y) {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const orbRadius = TILE_SIZE * 0.35;
+    // Clear orb area (slightly larger than orb)
+    ctx.clearRect(x - orbRadius - 4, y - orbRadius - 4, orbRadius * 2 + 8, orbRadius * 2 + 8);
+    // Redraw maze under orb (to avoid trails)
+    drawMazeStatic();
+    // Draw orb
+    const gradient = ctx.createRadialGradient(x, y, orbRadius * 0.3, x, y, orbRadius);
+    gradient.addColorStop(0, '#aef6ff');
+    gradient.addColorStop(0.5, '#3ecfff');
+    gradient.addColorStop(1, 'rgba(30,80,255,0.08)');
+    ctx.save();
+    ctx.globalAlpha = 0.95;
+    ctx.beginPath();
+    ctx.arc(x, y, orbRadius, 0, 2 * Math.PI);
+    ctx.fillStyle = gradient;
+    ctx.shadowColor = '#3ecfff';
+    ctx.shadowBlur = 32;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // On mount, draw maze and set orb pixel position
+  useEffect(() => {
+    drawMazeStatic();
+    const { offsetX, offsetY } = mazeOffsets.current;
+    setOrbPixel({
+      x: offsetX + (orbPos.x + 0.5) * TILE_SIZE,
+      y: offsetY + (orbPos.y + 0.5) * TILE_SIZE,
+    });
+    // eslint-disable-next-line
   }, []);
+
+  // Animate orb movement when orbPos changes
+  useEffect(() => {
+    const { offsetX, offsetY } = mazeOffsets.current;
+    const target = {
+      x: offsetX + (orbPos.x + 0.5) * TILE_SIZE,
+      y: offsetY + (orbPos.y + 0.5) * TILE_SIZE,
+    };
+    let animationFrame;
+    function animate() {
+      setOrbPixel(prev => {
+        const dx = target.x - prev.x;
+        const dy = target.y - prev.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 2) return target;
+        const step = 0.18; // Animation speed
+        return {
+          x: prev.x + dx * step,
+          y: prev.y + dy * step,
+        };
+      });
+      animationFrame = requestAnimationFrame(animate);
+    }
+    animate();
+    return () => cancelAnimationFrame(animationFrame);
+    // eslint-disable-next-line
+  }, [orbPos]);
+
+  // Redraw orb at new pixel position
+  useEffect(() => {
+    drawOrbAtPixel(orbPixel.x, orbPixel.y);
+    // eslint-disable-next-line
+  }, [orbPixel]);
+
+  // Voice control effect (Dutch)
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'nl-NL';
+    recognition.start();
+    recognition.onresult = (event) => {
+      const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+      let dx = 0, dy = 0;
+      if (transcript.includes('vooruit')) dy = -1;
+      else if (transcript.includes('achteruit')) dy = 1;
+      else if (transcript.includes('links')) dx = -1;
+      else if (transcript.includes('rechts')) dx = 1;
+      if (dx !== 0 || dy !== 0) {
+        const newX = orbPos.x + dx;
+        const newY = orbPos.y + dy;
+        if (
+          newY >= 0 && newY < MAZE.length &&
+          newX >= 0 && newX < MAZE[0].length &&
+          MAZE[newY][newX] === 0
+        ) {
+          setOrbPos({ x: newX, y: newY });
+        }
+      }
+    };
+    return () => recognition.abort();
+    // eslint-disable-next-line
+  }, [orbPos]);
 
   return (
     <main className={styles.container}>
@@ -173,6 +256,10 @@ export default function MazeTestPage() {
       </div>
       <Fireflies />
       <canvas ref={canvasRef} style={{ display: 'block', zIndex: 2, position: 'relative', margin: '0 auto' }} />
+      <div style={{position:'fixed',top:20,left:20,background:'#23243a',color:'#fff',padding:'10px 18px',borderRadius:8,opacity:0.92,zIndex:10}}>
+        <b>Zeg:</b> "vooruit", "achteruit", "links", "rechts"<br/>
+        <span style={{fontSize:12,opacity:0.7}}>om de blauwe bol te bewegen</span>
+      </div>
     </main>
   );
 } 
