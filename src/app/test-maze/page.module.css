@@ -1,1 +1,335 @@
-/* No custom styles needed; using HomeScreen.module.css for background and layout */ 
+/* De instructie-overlay gebruikt nu de IntroScreen.module.css klassen voor overlay, content, title, text en button. Oude .instructionOverlay, .instructionText en .instructionButton kunnen verwijderd worden. */ 
+.popupOverlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(20,22,40,0.72);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.popupContent {
+  background: url('/textures/wood.jpg') center center/cover no-repeat, #6b4f27ee;
+  border: 8px solid #d4af37;
+  border-radius: 40px;
+  box-shadow: 0 12px 64px #000a, 0 2px 0 #d4af37;
+  min-width: 420px;
+  max-width: 96vw;
+  min-height: 320px;
+  max-height: 90vh;
+  padding: 3.5em 3em 2.5em 3em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  font-family: 'UnifrakturCook', cursive, serif;
+  text-align: center;
+  z-index: 2;
+}
+
+.popupTitle {
+  color: #ffe066;
+  font-size: 2.7rem;
+  margin-bottom: 1.2em;
+  text-shadow: 0 2px 16px #000, 0 1px 0 #23243a;
+}
+
+.popupText {
+  color: #fffbe7;
+  font-size: 1.45rem;
+  text-shadow: 0 2px 8px #000, 0 1px 0 #d4af37;
+  margin-bottom: 2.8em;
+  line-height: 1.7;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.popupButton {
+  font-family: 'UnifrakturCook', cursive, serif;
+  font-size: 1.5rem;
+  padding: 1em 3em;
+  border-radius: 1.4em;
+  border: 3px solid #d4af37;
+  background: linear-gradient(180deg, #2d2323 0%, #5a4a1c 100%);
+  color: #ffe066;
+  box-shadow: 0 4px 24px #000a, 0 2px 0 #d4af37;
+  cursor: pointer;
+  text-shadow: 0 2px 8px #000, 0 1px 0 #d4af37;
+  border-bottom: 6px solid #a67c1a;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  transition: background 0.2s, box-shadow 0.2s;
+  z-index: 10;
+}
+.popupButton:active, .popupButton:focus {
+  background: #444;
+  box-shadow: 0 2px 8px #000a;
+} 
+
+/* Echo mini-game styling */
+.echoOverlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(10,12,18,0.55);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+}
+
+.echoCard {
+  background: #10131a;
+  border-radius: 22px;
+  padding: 36px;
+  min-width: 440px;
+  max-width: 720px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.echoIntro {
+  position: absolute;
+  inset: 0;
+  background: rgb(10,12,18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.echoTitle {
+  font-size: 28px;
+  color: #e8f3ff;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  margin-bottom: 20px;
+}
+
+.echoSubtitle {
+  color: #c9d8e8;
+  font-size: 18px;
+  margin-bottom: 18px;
+}
+
+.echoHint {
+  color: #94a6bb;
+  font-size: 17px;
+  margin-bottom: 32px;
+}
+
+.echoStartBtn,
+.echoBtn {
+  font-size: 17px;
+  padding: 0.8em 1.6em;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.02);
+  color: #e8f3ff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s;
+}
+.echoStartBtn:hover,
+.echoBtn:hover {
+  background: rgba(107,193,255,0.12);
+  border-color: rgba(107,193,255,0.5);
+}
+.echoStartBtn:active,
+.echoBtn:active {
+  background: rgba(107,193,255,0.18);
+}
+
+.echoWordStep {
+  font-size: 16px;
+  color: #94a6bb;
+  margin-bottom: 12px;
+}
+
+.echoWord {
+  font-size: 42px;
+  color: #f6fbff;
+  margin-bottom: 22px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  line-height: 1.35;
+}
+
+.echoProgressBar {
+  height: 16px;
+  background: #1c2230;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0 auto 26px;
+  width: 92%;
+}
+
+.echoProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg,#6bc1ff,#4da6ff);
+  transition: width 0.25s;
+}
+
+.echoOrb {
+  display: inline-block;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, #d6f0ff, #7dc9ff 60%, rgba(30,80,255,0.12) 100%);
+  box-shadow: 0 0 20px rgba(77,166,255,0.35);
+}
+
+.echoMicState {
+  color: #8edaa1;
+  margin-bottom: 12px;
+}
+
+.echoMicState.off {
+  color: #ff9a9a;
+}
+
+.echoHeard {
+  color: #cfd9e6;
+  min-height: 28px;
+  margin-bottom: 18px;
+}
+
+.echoButtons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+/* Win Screen Styling */
+.winOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+
+.winContent {
+  background: url('/textures/wood.jpg') center center/cover no-repeat, #6b4f27ee;
+  border: 8px solid #d4af37;
+  border-radius: 40px;
+  box-shadow: 0 20px 80px #000a, 0 4px 0 #d4af37, inset 0 0 32px #0b0e18;
+  min-width: 520px;
+  max-width: 96vw;
+  min-height: 420px;
+  padding: 3.5em 3em 2.5em 3em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  font-family: 'UnifrakturCook', cursive, serif;
+  text-align: center;
+  z-index: 2;
+}
+
+.winOrb {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fffbe7 0%, #ffe066 40%, #ffd700 70%, #ffb347 100%);
+  box-shadow: 
+    0 0 60px 20px #ffe066,
+    0 0 120px 40px #ffd700,
+    0 0 180px 60px rgba(255, 215, 0, 0.3),
+    inset 0 0 24px rgba(255, 255, 255, 0.8);
+  margin-bottom: 1.5em;
+  animation: winOrbGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes winOrbGlow {
+  0% {
+    box-shadow: 
+      0 0 60px 20px #ffe066,
+      0 0 120px 40px #ffd700,
+      0 0 180px 60px rgba(255, 215, 0, 0.3),
+      inset 0 0 24px rgba(255, 255, 255, 0.8);
+    transform: scale(1);
+  }
+  100% {
+    box-shadow: 
+      0 0 80px 30px #fffbe7,
+      0 0 160px 60px #ffe066,
+      0 0 240px 80px rgba(255, 224, 102, 0.4),
+      inset 0 0 32px rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+  }
+}
+
+.winTitle {
+  color: #ffe066;
+  font-size: 3rem;
+  margin-bottom: 1em;
+  text-shadow: 0 4px 20px #000, 0 2px 0 #23243a;
+  letter-spacing: 0.04em;
+}
+
+.winText {
+  color: #ffffff;
+  font-size: 1.6rem;
+  line-height: 1.8;
+  margin-bottom: 2em;
+  text-shadow: 0 3px 12px #000, 0 2px 0 #000;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-weight: 600;
+}
+
+.winText p {
+  margin: 1em 0;
+  text-align: center;
+  max-width: 100%;
+}
+
+.winText strong {
+  color: #ffe066;
+  font-weight: 700;
+  text-shadow: 0 2px 8px #000, 0 1px 0 #d4af37;
+}
+
+.winHighlight {
+  color: #ffe066 !important;
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  text-shadow: 0 4px 16px #000, 0 2px 0 #d4af37 !important;
+  margin-top: 1.5em !important;
+  text-align: center !important;
+  max-width: 100% !important;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+}
+
+.winButton {
+  font-family: 'UnifrakturCook', cursive, serif;
+  font-size: 1.8rem;
+  padding: 1em 2.5em;
+  border-radius: 1.4em;
+  border: 3px solid #d4af37;
+  background: linear-gradient(180deg, #2d2323 0%, #5a4a1c 100%);
+  color: #ffe066;
+  box-shadow: 0 8px 32px #000a, 0 3px 0 #d4af37;
+  cursor: pointer;
+  text-shadow: 0 2px 8px #000, 0 1px 0 #d4af37;
+  border-bottom: 6px solid #a67c1a;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.winButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px #000a, 0 4px 0 #d4af37;
+}
+
+.winButton:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 16px #000a, 0 2px 0 #d4af37;
+}

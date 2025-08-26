@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from './HomeScreen.module.css';
 
 const NUM_FIREFLIES = 24;
@@ -8,15 +8,19 @@ function random(min, max) {
 }
 
 const Fireflies = () => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const fireflyData = useMemo(() => (
-    Array.from({ length: NUM_FIREFLIES }).map(() => ({
-      left: random(2, 96),
-      top: random(2, 92),
-      size: random(3, 8),
-      duration: random(18, 32),
-      delay: random(0, 12),
-    }))
-  ), []);
+    mounted
+      ? Array.from({ length: NUM_FIREFLIES }).map(() => ({
+          left: random(2, 96),
+          top: random(2, 92),
+          size: random(3, 8),
+          duration: random(18, 32),
+          delay: random(0, 12),
+        }))
+      : []
+  ), [mounted]);
 
   return (
     <>

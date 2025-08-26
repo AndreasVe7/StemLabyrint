@@ -3,8 +3,10 @@ import React, { useRef, useState } from 'react';
 import styles from '../HomeScreen.module.css';
 import Fireflies from '../Fireflies';
 import { FaCheckCircle } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 export default function Tutorial() {
+  const router = useRouter();
   const [listening, setListening] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [orbPos, setOrbPos] = useState({ x: 0, y: 0 });
@@ -95,6 +97,15 @@ export default function Tutorial() {
   }
 
   const allDone = completed.links && completed.rechts && completed.achteruit;
+
+  React.useEffect(() => {
+    if (allDone) {
+      const timeout = setTimeout(() => {
+        router.push('/test-maze');
+      }, 1200); // kleine delay voor feedback
+      return () => clearTimeout(timeout);
+    }
+  }, [allDone, router]);
 
   return (
     <main className={styles.container}>

@@ -162,4 +162,102 @@
 .startButton:active, .startButton:focus {
   transform: scale(0.97);
   box-shadow: 0 0 24px 8px #6a7cff, 0 0 32px 12px #23243a;
+}
+
+.introOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.introContent {
+  position: relative;
+  z-index: 51;
+  width: min(980px, 94vw);
+  max-height: 86vh;
+  padding: 0 1.2rem 1.2rem;
+  color: #eaf0ff;
+}
+
+.introHeader {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  font-size: 1.25rem;
+  color: #e8ecff;
+  text-shadow: 0 2px 10px #000;
+  opacity: 0.9;
+  margin: 0 0 1.2rem 0;
+  text-align: center;
+}
+
+.introText {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 2rem;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  color: #f6f6fa;
+  text-shadow: 0 2px 10px #000;
+  text-align: center;
+  margin-bottom: 1.4rem;
+}
+
+.introLine {
+  opacity: 0;
+  animation: fadeInLine 500ms ease forwards;
+  margin: 0.4em 0;
+}
+
+.introLead {
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+@keyframes fadeInLine {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.introActions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+}
+
+.secondaryButton {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.75em 1.3em;
+  border-radius: 999px;
+  border: 2px solid #7b86b8;
+  color: #e6ecff;
+  background: rgba(30, 34, 52, 0.65);
+  box-shadow: 0 6px 20px #000a;
+  cursor: pointer;
+  text-shadow: 0 2px 8px #000;
+}
+
+.primaryButton {
+  font-family: 'UnifrakturCook', cursive, serif;
+  letter-spacing: 0.02em;
+  font-size: 1.6rem;
+  padding: 0.55em 1.5em;
+  border-radius: 999px;
+  border: 2px solid #d4af37;
+  color: #ffe066;
+  background: linear-gradient(180deg, #2d2323 0%, #5a4a1c 100%);
+  box-shadow: 0 6px 24px #000a, 0 2px 0 #d4af37;
+  cursor: pointer;
+  text-shadow: 0 2px 8px #000, 0 1px 0 #d4af37;
+}
+
+.primaryButton:active, .secondaryButton:active {
+  transform: translateY(1px);
 } 
