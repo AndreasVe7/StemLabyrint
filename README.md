@@ -3,7 +3,7 @@
 <div align="center">
   <img src="public/Group 1 (3).png" alt="StemLabyrint Logo" width="200" height="200">
   
-  [![Installatie Video](https://img.shields.io/badge/📹-Installatie_Video-red?style=for-the-badge)](https://youtu.be/your-video-id)
+  [![Installatie Video](https://img.shields.io/badge/📹-Installatie_Video-red?style=for-the-badge)](https://youtu.be/MrfH1naLRok)
   [![Next.js](https://img.shields.io/badge/Next.js-15.4.1-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
   [![React](https://img.shields.io/badge/React-19.1.0-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
   [![Three.js](https://img.shields.io/badge/Three.js-0.155.0-000000?style=for-the-badge&logo=three.js)](https://threejs.org/)
