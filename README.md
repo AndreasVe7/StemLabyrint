@@ -9,6 +9,7 @@
   [![Three.js](https://img.shields.io/badge/Three.js-0.155.0-000000?style=for-the-badge&logo=three.js)](https://threejs.org/)
 </div>
 
+
 ## 🎯 Wat is StemLabyrint?
 
 StemLabyrint is een interactieve, stemgestuurde spelwereld gebouwd met Next.js en Three.js. Het is ontworpen om kinderen te helpen met spraakontwikkeling, ademhalingsoefeningen en ontspanning door middel van een magische kasteelomgeving waar hun stem de weg wijst.
@@ -106,6 +107,178 @@ useEffect(() => {
 - Gebruiker moet eerst interactie hebben gehad
 - Graceful fallback als audio niet kan starten
 
+### 🎮 Maze Game Mechanica
+```javascript
+// src/app/test-maze/page.js
+const MAZE = [
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  // ... meer maze data
+];
+
+// Maze rendering met Canvas 2D
+function drawMazeStatic() {
+  const canvas = canvasRef.current;
+  const ctx = canvas.getContext('2d');
+  
+  // Teken muren en gangen
+  for (let x = 0; x <= mazeCols; x++) {
+    for (let y = 0; y < mazeRows; y++) {
+      if (MAZE[y][x] === 1) {
+        ctx.fillStyle = WALL_COLOR;
+        ctx.fillRect(offsetX + x * TILE_SIZE, offsetY + y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+      }
+    }
+  }
+}
+```
+
+**Technische details:**
+- Maze wordt opgeslagen als 2D array (0 = gang, 1 = muur)
+- Canvas 2D rendering voor betere performance dan DOM elementen
+- Responsive maze die zich aanpast aan schermgrootte
+
+### 🎯 Mini-Game Systeem
+```javascript
+// Mini-game punten in de maze
+const MINI_GAME_POINTS = [
+  { x: 5, y: 5, type: 'candle-game' },
+  { x: 15, y: 10, type: 'breathing-exercise' },
+  { x: 25, y: 20, type: 'voice-training' }
+];
+
+// Mini-game activatie
+const [activeMiniGame, setActiveMiniGame] = useState(null);
+const [completedPoints, setCompletedPoints] = useState(MINI_GAME_POINTS.map(() => false));
+
+// Check of speler bij een mini-game punt is
+useEffect(() => {
+  MINI_GAME_POINTS.forEach((point, idx) => {
+    if (orbPos.x === point.x && orbPos.y === point.y && !completedPoints[idx]) {
+      setActiveMiniGame(idx);
+    }
+  });
+}, [orbPos, completedPoints]);
+```
+
+**Game design principes:**
+- Modulaire mini-game architectuur
+- State management voor game progressie
+- Collision detection tussen speler en game punten
+
+### 🗣️ Voice Recognition Implementatie
+```javascript
+// src/app/test-voice/page.js
+const [isListening, setIsListening] = useState(false);
+const [transcript, setTranscript] = useState('');
+
+useEffect(() => {
+  if (!('webkitSpeechRecognition' in window)) {
+    console.log('Speech recognition not supported');
+    return;
+  }
+
+  const recognition = new webkitSpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'nl-NL';
+
+  recognition.onresult = (event) => {
+    let finalTranscript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) {
+        finalTranscript += event.results[i][0].transcript;
+      }
+    }
+    setTranscript(finalTranscript);
+  };
+}, []);
+```
+
+**Voice recognition features:**
+- Nederlandse taal ondersteuning
+- Real-time transcriptie
+- Fallback voor browsers zonder speech recognition
+- Continuous listening mode
+
+### 🎨 3D Rendering met React Three Fiber
+```javascript
+// src/app/page.js - 3D Scene setup
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Environment } from '@react-three/drei';
+
+export default function HomeScreen() {
+  return (
+    <div className={styles.container}>
+      <Canvas
+        camera={{ position: [0, 5, 10], fov: 75 }}
+        shadows
+        gl={{ antialias: true }}
+      >
+        <Environment preset="sunset" />
+        <ambientLight intensity={0.5} />
+        <directionalLight
+          position={[10, 10, 5]}
+          intensity={1}
+          castShadow
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+        />
+        
+        {/* 3D Objecten */}
+        <Castle />
+        <Fireflies />
+        <Ground />
+        
+        <OrbitControls enablePan={false} maxPolarAngle={Math.PI / 2} />
+      </Canvas>
+    </div>
+  );
+}
+```
+
+**3D Scene optimalisatie:**
+- Shadow mapping voor realistische verlichting
+- Environment maps voor sfeervolle belichting
+- Orbit controls met beperkingen voor betere UX
+- Performance optimalisatie met React Three Fiber
+
+### 🔄 State Management Architectuur
+```javascript
+// Hoofdcomponent state structuur
+const [gameState, setGameState] = useState({
+  currentLevel: 1,
+  completedMiniGames: [],
+  playerProgress: 0,
+  audioSettings: {
+    musicVolume: 0.7,
+    sfxVolume: 1.0,
+    muted: false
+  }
+});
+
+// Custom hook voor game state
+const useGameState = () => {
+  const [state, setState] = useState(initialGameState);
+  
+  const updateProgress = (miniGameId) => {
+    setState(prev => ({
+      ...prev,
+      completedMiniGames: [...prev.completedMiniGames, miniGameId],
+      playerProgress: calculateProgress(prev.completedMiniGames.length + 1)
+    }));
+  };
+  
+  return [state, updateProgress];
+};
+```
+
+**State management principes:**
+- Centralized state voor game progressie
+- Immutable updates voor betere performance
+- Custom hooks voor herbruikbare logica
+- LocalStorage voor persistentie
+
 ### 🌟 Fireflies Effect
 ```javascript
 // src/app/Fireflies.js
@@ -134,6 +307,90 @@ export default function Fireflies() {
 - Gebruikt React Three Fiber voor 3D rendering
 - `useFrame` hook voor 60fps animaties
 - Performance geoptimaliseerd met refs
+
+### 🎨 Component Architectuur & Styling
+```javascript
+// Component structuur voor herbruikbaarheid
+const MiniGameWrapper = ({ children, onComplete, isActive }) => {
+  const [isCompleted, setIsCompleted] = useState(false);
+  
+  const handleComplete = () => {
+    setIsCompleted(true);
+    onComplete?.();
+  };
+  
+  return (
+    <div className={`${styles.miniGameWrapper} ${isActive ? styles.active : ''}`}>
+      {!isCompleted ? children : <div className={styles.completed}>Voltooid! ✓</div>}
+    </div>
+  );
+};
+
+// CSS Module implementatie
+const styles = {
+  miniGameWrapper: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    background: 'rgba(0, 0, 0, 0.9)',
+    borderRadius: '12px',
+    padding: '24px',
+    zIndex: 1000,
+    transition: 'all 0.3s ease-in-out'
+  },
+  active: {
+    opacity: 1,
+    transform: 'translate(-50%, -50%) scale(1)'
+  },
+  completed: {
+    color: '#4CAF50',
+    fontSize: '18px',
+    fontWeight: 'bold',
+    textAlign: 'center'
+  }
+};
+```
+
+**Component design principes:**
+- Composable componenten voor herbruikbaarheid
+- CSS Modules voor scoped styling
+- Props interface voor flexibele configuratie
+- State management per component
+
+### 🔧 Performance Optimalisatie Technieken
+```javascript
+// Memoization voor zware berekeningen
+const memoizedMazeData = useMemo(() => {
+  return MAZE.map(row => row.map(cell => ({
+    ...cell,
+    distance: calculateDistance(cell, playerPosition)
+  })));
+}, [playerPosition]);
+
+// Debounced input handling
+const debouncedVoiceInput = useCallback(
+  debounce((input) => {
+    processVoiceCommand(input);
+  }, 300),
+  []
+);
+
+// Lazy loading van componenten
+const LazyMiniGame = lazy(() => import('./MiniGame'));
+const LazyTutorial = lazy(() => import('./Tutorial'));
+
+// Suspense wrapper
+<Suspense fallback={<div>Laden...</div>}>
+  {showMiniGame && <LazyMiniGame />}
+</Suspense>
+```
+
+**Performance verbeteringen:**
+- React.memo voor onnodige re-renders voorkomen
+- useMemo voor dure berekeningen
+- Lazy loading voor code splitting
+- Debouncing voor gebruikersinput
 
 ### 🎭 State Management
 ```javascript
